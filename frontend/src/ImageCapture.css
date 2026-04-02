@@ -1,0 +1,208 @@
+/* Styles for MediaCapture component */
+
+.image-capture-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #333; /* Dark background for the whole component */
+  color: white;
+}
+
+.capture-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2196F3; /* Blue background */
+  color: white;
+  padding: 10px 15px;
+  min-height: 56px; /* Standard mobile header height */
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.capture-header .back-button {
+  background: #2645ce;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+  position: absolute;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.capture-header .back-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.capture-header .header-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.camera-preview-wrapper {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Ensures video doesn't spill out */
+  background-color: #000; /* Black background for preview area */
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Maintain aspect ratio and cover container */
+  /* Filter for blurred background until focus is achieved - can be toggled with JS */
+  /* filter: blur(5px); */
+}
+
+.scan-guide-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%; /* Adjust as needed */
+  padding-bottom: 70%; /* Creates a square aspect ratio */
+  max-width: 300px; /* Maximum size for the square */
+  max-height: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border for the main square */
+  pointer-events: none; /* Allows interaction with elements behind it */
+}
+
+.corner-bracket {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: white;
+  border-style: solid;
+  pointer-events: none;
+}
+
+.corner-bracket.top-left {
+  top: 0;
+  left: 0;
+  border-width: 3px 0 0 3px;
+}
+
+.corner-bracket.top-right {
+  top: 0;
+  right: 0;
+  border-width: 3px 3px 0 0;
+}
+
+.corner-bracket.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 3px 3px;
+}
+
+.corner-bracket.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-width: 0 3px 3px 0;
+}
+
+.scan-indicator-arrow {
+  position: absolute;
+  left: 5%; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4CAF50; /* Green color for the arrow */
+  font-size: 30px; /* Adjust size as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.scan-indicator-arrow svg {
+  width: 30px;
+  height: 30px;
+}
+
+.capture-controls-bottom {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 15px 0;
+  background-color: rgba(85, 85, 85, 0.6); /* Gray semi-transparent background */
+  box-sizing: border-box;
+}
+
+.gallery-thumbnail-button,
+.camera-switch-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  transition: background-color 0.2s;
+}
+
+.gallery-thumbnail-button:hover,
+.camera-switch-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.gallery-thumbnail-button .thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.shutter-button {
+  background: none;
+  border: 4px solid white;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.1s ease-in-out;
+}
+
+.shutter-button:active {
+  transform: scale(0.95);
+  border-color: white;
+}
+
+.shutter-inner-ring {
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border: none;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  padding: 10px;
+}
+
+.info-message {
+  color: green;
+  text-align: center;
+  padding: 10px;
+}

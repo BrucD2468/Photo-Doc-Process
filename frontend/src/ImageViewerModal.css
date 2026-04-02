@@ -1,0 +1,149 @@
+.image-viewer-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* Ensure it's on top of everything */
+}
+
+.image-viewer-modal-content {
+  background-color: #333; /* Dark background for the modal content */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+.image-viewer-modal-content .back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #2645ce;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+
+.main-image-display {
+  margin-bottom: 15px;
+  border: 2px solid #555; /* Border around the image */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Ensure image doesn't overflow border */
+}
+
+.displayed-image {
+  max-width: 100%;
+  max-height: 60vh; /* Adjust as needed for screen height */
+  height: auto;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.navigation-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 500px; /* Limit width of nav controls */
+  margin-bottom: 15px;
+}
+
+.nav-button {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue gradient */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 24px;
+  transition: background-color 0.3s ease;
+  flex-grow: 1;
+  margin: 0 5px;
+}
+
+.nav-button:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+.image-info {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.image-info p {
+  margin: 5px 0;
+}
+
+.image-info .pagination {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-viewer-modal-content {
+    padding: 15px;
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .displayed-image {
+    max-height: 50vh;
+  }
+
+  .nav-button {
+    padding: 8px 15px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-viewer-modal-content .back-button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  .displayed-image {
+    max-height: 40vh;
+  }
+
+  .nav-button {
+    padding: 6px 10px;
+    font-size: 18px;
+  }
+
+  .image-info {
+    font-size: 12px;
+  }
+
+  .image-info p {
+    margin: 3px 0;
+  }
+
+  .image-info .pagination {
+    font-size: 14px;
+  }
+}

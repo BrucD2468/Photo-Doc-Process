@@ -1,0 +1,1 @@
+ALTER TABLE Barcode_Info ADD COLUMN images JSON;

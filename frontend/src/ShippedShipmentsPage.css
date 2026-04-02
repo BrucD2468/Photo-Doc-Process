@@ -1,0 +1,113 @@
+/* ShippedShipmentsPage.css */
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+/* For date range and customer/barcode search groups */
+/* New style for the customer filter item to make checkbox/label and input horizontal */
+.filter-item.customer-filter-item {
+  display: flex;
+  flex-direction: row; /* Arrange label and input horizontally */
+  align-items: flex-start; /* Vertically align items to the start */
+  gap: 10px; /* Space between checkbox/label and input */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+/* Adjust input search group within customer filter item to take available space */
+.filter-item.customer-filter-item .input-search-group {
+  flex-grow: 1; /* Allow the input to take available space */
+  min-width: 150px; /* Ensure input has a minimum width before wrapping */
+}
+
+/* Ensure the checkbox label itself is also flex for its contents */
+.filter-item.customer-filter-item .checkbox-label {
+    flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+.filter-item.barcode-search-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end; /* Align button to the bottom of the input */
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.filter-item.barcode-search-item .input-search-group {
+  flex-grow: 1;
+  min-width: 180px;
+}
+
+.checkbox-label {
+  display: flex;
+  justify-content: flex-start; /* Ensure content is aligned to the left */
+  gap: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left; /* Explicitly align text to the left */ /* Prevent label from wrapping */
+}
+
+.checkbox-label input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.date-range-inputs {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.date-range-inputs input[type="date"] {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.customer-barcode-search-row {
+  display: flex;
+  flex-direction: row; /* Main items in a row */
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 10px;
+  align-items: flex-end; /* Align to bottom for varying heights */
+  margin-top: 10px; /* Some space from the date filter */
+}
+
+.input-search-group { /* Reusing this for general input styling */
+  width: 100%; /* Ensure it fills parent flex item */
+}
+
+.input-search-group input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.search-button {
+  padding: 8px 10px;
+  font-size: 14px;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue gradient */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 36px; /* Match input height for alignment */
+  display: flex;
+  max-width: 100px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.search-button:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
