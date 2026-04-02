@@ -6,3 +6,4 @@ cryptography==42.0.5
 azure-storage-blob==12.19.0
 python-dotenv==1.0.1
 python-multipart==0.0.22
+gunicorn==21.2.0
