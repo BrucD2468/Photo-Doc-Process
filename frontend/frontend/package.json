@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "barcode-scanner-frontend": "file:.."
-  }
-}
