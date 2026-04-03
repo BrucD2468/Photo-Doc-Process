@@ -6,7 +6,7 @@ import MediaCapture from './ImageCapture'
 import { UserMenuComponent } from './App'
 import Sidebar from './Sidebar' // Import Sidebar component
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL
 
 function AdminPanel({ user, handleLogout, setPage, currentPage }) {
   const [tab, setTab] = useState('info')
