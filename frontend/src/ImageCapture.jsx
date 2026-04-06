@@ -12,8 +12,10 @@ import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useSnackbar } from 'notistack';
 
 function MediaCapture({ onClose, onCapture, onDelete, onClear, onSave, allowSave = false, barcode, headerTitle, images: initialImages = [], currentUser, toggleSidebar, hamburgerButtonRef }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [mode, setMode] = useState(null)
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
@@ -277,7 +279,7 @@ function MediaCapture({ onClose, onCapture, onDelete, onClear, onSave, allowSave
 
         <Tooltip title="Switch Camera (TBD)">
           <IconButton
-            onClick={() => alert('Switch Camera - TBD')}
+            onClick={() => enqueueSnackbar('Switch Camera - TBD', { variant: 'info' })}
             color="primary"
             size="large"
             sx={{

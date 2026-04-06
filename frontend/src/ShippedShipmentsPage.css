@@ -111,3 +111,69 @@
 .search-button:hover {
   background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
 }
+
+.shipping-lists-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.shipping-list-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px; /* Ensure cards have a consistent minimum height */
+}
+
+.shipping-list-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.shipment-list-name {
+  font-size: 1.2em;
+  font-weight: 700; /* Bold shipment number */
+  color: #333;
+  margin: 0;
+}
+
+.shipment-status {
+  background-color: #e0f7fa; /* Light blue for status */
+  color: #007bb2;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.shipment-meta {
+  font-size: 0.9em;
+  color: #777; /* Muted text for date and other meta info */
+  margin-bottom: 5px;
+}
+
+.shipment-meta:last-child {
+  margin-bottom: 0;
+}

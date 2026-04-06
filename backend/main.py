@@ -348,6 +348,20 @@ async def import_csv(email: str = Form(...), file: UploadFile = File(...)):
 
     return {"success": True, "inserted": inserted, "message": f"Successfully inserted {inserted} new barcodes."}
 
+@app.get("/api/customer-names")
+async def get_customer_names():
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    try:
+        cursor.execute("SELECT DISTINCT customer_name FROM Barcode_Info WHERE customer_name IS NOT NULL AND customer_name != '' ORDER BY customer_name ASC")
+        customer_names = [row["customer_name"] for row in cursor.fetchall()]
+        return {"customer_names": customer_names}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.get("/api/shipping-lists")
 async def get_shipping_lists(customer_name: Optional[str] = None):
     conn = get_db_connection()

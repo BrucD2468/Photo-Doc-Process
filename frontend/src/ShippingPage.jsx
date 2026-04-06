@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Box, Typography, Button, Paper, IconButton, CircularProgress } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import CameraIcon from '@mui/icons-material/CameraAlt';
+import { useSnackbar } from 'notistack';
 
 const ShippingPage = ({ shippingList, onClose, onSelectBarcode, navigateToPalletPage, API_URL, user, UserMenuComponent }) => {
+    const { enqueueSnackbar } = useSnackbar();
     const [barcodeRecords, setBarcodeRecords] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
@@ -19,7 +24,7 @@ const ShippingPage = ({ shippingList, onClose, onSelectBarcode, navigateToPallet
                 setBarcodeRecords(data.records);
             } catch (err) {
                 console.error("Error fetching barcode records for shipping list:", err);
-                setError("Failed to load barcode records.");
+                enqueueSnackbar("Failed to load barcode records.", { variant: 'error' });
             } finally {
                 setLoading(false);
             }
@@ -35,75 +40,85 @@ const ShippingPage = ({ shippingList, onClose, onSelectBarcode, navigateToPallet
     );
 
     if (!shippingList) {
-        return <div className="shipping-page-container">No shipping list selected.</div>;
+        return <Box className="shipping-page-container" sx={{ p: 2 }}>
+            <Typography variant="body1" textAlign="center">
+                No shipping list selected.
+            </Typography>
+        </Box>;
     }
 
     return (
-        <div className="shipping-page-container">
-            <div className="header">
-                <button onClick={onClose} className="icon-button back-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                <h3>Shipping List: {shippingList.list_name}</h3>
+        <Box className="shipping-page-container" sx={{ p: 2 }}>
+            <Box className="header" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <IconButton onClick={onClose} aria-label="back" sx={{ mr: 1 }}>
+                    <ChevronLeftIcon />
+                </IconButton>
+                <Typography variant="h5" component="h2" sx={{ flexGrow: 1 }}>
+                    Shipping List: {shippingList.list_name}
+                </Typography>
                 {UserMenuComponent && UserMenuComponent()}
-            </div>
+            </Box>
 
-            <div className="search-bar-container">
-                <div className="input-search-group">
-                    <input
-                        type="text"
-                        placeholder="🔍Filter by barcode number..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-            </div>
+            <Box className="search-bar-container" sx={{ mb: 2 }}>
+                <input
+                    type="text"
+                    placeholder="🔍Filter by barcode number..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid var(--color-neutral-300)',
+                        backgroundColor: 'var(--color-neutral-100)',
+                        color: 'var(--text-color-primary)',
+                    }}
+                />
+            </Box>
 
-            {loading && <div className="loading-message">Loading barcode records...</div>}
-            {error && <div className="error-message">{error}</div>}
-
-            {!loading && !error && filteredRecords.length === 0 && (
-                <div className="no-records-message">No barcode records found for this shipping list.</div>
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                    <CircularProgress />
+                </Box>
+            ) : filteredRecords.length === 0 ? (
+                <Typography variant="body1" textAlign="center" sx={{ mt: 4 }}>
+                    No barcode records found for this shipping list.
+                </Typography>
+            ) : (
+                <Box className="shipping-list-cards-container">
+                    {filteredRecords.map(record => (
+                        <Paper key={record.id} sx={{ p: 2, mb: 2, position: 'relative' }}>
+                            <Typography variant="h6" gutterBottom>{record.barcode}</Typography>
+                            <Typography variant="body2"><strong>Customer Name:</strong> {record.customer_name}</Typography>
+                            <Typography variant="body2"><strong>Expected Ship Date:</strong> {record.expected_ship_date}</Typography>
+                            <Typography variant="body2"><strong>BOL #:</strong> {record.bol_number}</Typography>
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent row click
+                                    onSelectBarcode(record);
+                                }}
+                                aria-label="view images"
+                                sx={{ position: 'absolute', top: 8, right: 8 }}
+                            >
+                                <CameraIcon />
+                                <Typography variant="caption" sx={{ ml: 0.5 }}>
+                                    {record.images ? `${record.images.length} >` : '0 >'}
+                                </Typography>
+                            </IconButton>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                onClick={() => navigateToPalletPage([record])}
+                                sx={{ mt: 2 }}
+                            >
+                                View Pallet
+                            </Button>
+                        </Paper>
+                    ))}
+                </Box>
             )}
-
-            {!loading && !error && filteredRecords.length > 0 && (
-                <div className="shipping-list-table-container">
-                    <table className="shipping-list-table">
-                        <thead>
-                            <tr>
-                                <th>Barcode</th>
-                                <th>Customer Name</th>
-                                <th>Expected Ship Date</th>
-                                <th>BOL #</th>
-                                <th>Photos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredRecords.map(record => (
-                                <tr key={record.id} onClick={() => navigateToPalletPage([record])} className="shipping-list-table-row">
-                                    <td>{record.barcode}</td>
-                                    <td>{record.customer_name}</td>
-                                    <td>{record.expected_ship_date}</td>
-                                    <td>{record.bol_number}</td>
-                                    <td>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent row click
-                                                onSelectBarcode(record);
-                                            }}
-                                            className="icon-button image-count-button green-button"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                                            {record.images ? `${record.images.length} >` : '0 >'}
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </div>
+        </Box>
     );
 };
 

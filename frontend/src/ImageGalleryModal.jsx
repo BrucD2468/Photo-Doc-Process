@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import MediaCapture from './ImageCapture'
+import { useSnackbar } from 'notistack';
 
 function ImageGalleryModal({ record, onClose, API_URL, user, fetchRecords }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [images, setImages] = useState(record.images || [])
   const [isCapturing, setIsCapturing] = useState(false)
   const MAX_IMAGES = 10
@@ -28,7 +30,7 @@ function ImageGalleryModal({ record, onClose, API_URL, user, fetchRecords }) {
           })
           const data = await response.json()
           if (data.success) {
-            alert('Image added successfully to record!')
+            enqueueSnackbar('Image added successfully to record!', { variant: 'success' });
             // Update local state with the full image object, including metadata from backend
             setImages((prevImages) => [...prevImages, {
               url: newImage.url,
@@ -43,8 +45,7 @@ function ImageGalleryModal({ record, onClose, API_URL, user, fetchRecords }) {
             throw new Error(data.detail || 'Failed to add image')
           }
         } catch (error) {
-          alert('Error adding image: ' + error.message)
-        }
+          enqueueSnackbar('Error adding image: ' + error.message, { variant: 'error' });
       }
 
   const handleDeleteImage = async (indexToDelete) => {
@@ -62,7 +63,7 @@ function ImageGalleryModal({ record, onClose, API_URL, user, fetchRecords }) {
         })
         const data = await response.json()
         if (data.success) {
-          alert('Image deleted successfully!')
+          enqueueSnackbar('Image deleted successfully!', { variant: 'success' });
           const newImages = images.filter((_, i) => i !== indexToDelete)
           setImages(newImages)
           fetchRecords() // Refresh parent component's records
@@ -70,7 +71,7 @@ function ImageGalleryModal({ record, onClose, API_URL, user, fetchRecords }) {
           throw new Error(data.detail || 'Failed to delete image')
         }
       } catch (error) {
-        alert('Error deleting image: ' + error.message)
+        enqueueSnackbar('Error deleting image: ' + error.message, { variant: 'error' });
       }
     }
   }
@@ -143,21 +144,22 @@ function ImageGalleryModal({ record, onClose, API_URL, user, fetchRecords }) {
                 })
                 const data = await response.json()
                 if (data.success) {
-                  alert('Image(s) added successfully!')
+                  enqueueSnackbar('Image(s) added successfully!', { variant: 'success' });
                   fetchRecords() // Refresh the records list in MyInfo
                   setIsCapturing(false)
                 } else {
                   throw new Error(data.detail || 'Failed to add image(s)')
                 }
               } catch (error) {
-                alert('Error adding image(s): ' + error.message)
+                enqueueSnackbar('Error adding image(s): ' + error.message, { variant: 'error' });
               }
             }}
           />
-        )}
+     )}
       </div>
     </div>
   )
+}
 }
 
 export default ImageGalleryModal

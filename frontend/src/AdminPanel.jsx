@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid'
-import { Box, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, useTheme, Tooltip, Stack, Typography } from '@mui/material'
+import { Box, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, useTheme, Tooltip, Stack, Typography, Grid, Paper } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -9,6 +9,7 @@ import ImageGalleryModal from './ImageGalleryModal'
 import BarcodeInputModal from './BarcodeInputModal'
 import MediaCapture from './ImageCapture'
 import { UserMenuComponent } from './App'
+import { useSnackbar } from 'notistack';
 
 
 const API_URL = import.meta.env.VITE_API_URL || ""
@@ -98,6 +99,7 @@ const RecordCard = ({ record, setGalleryRecord, deleteBarcodeRecord }) => {
 };
 
 function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, hamburgerButtonRef, adminPanelTab }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [users, setUsers] = useState([])
   const [records, setRecords] = useState([])
   const [filteredRecords, setFilteredRecords] = useState([])
@@ -331,7 +333,7 @@ function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, h
 
   const deleteUser = async (id, email) => {
     if (email === user.email) {
-      alert('Cannot delete yourself')
+      enqueueSnackbar('Cannot delete yourself', { variant: 'warning' });
       return
     }
     if (confirm('Are you sure you want to delete this user?')) {
@@ -374,13 +376,13 @@ function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, h
       })
       const data = await response.json()
       if (data.success) {
-        alert('New barcode record saved successfully!')
+        enqueueSnackbar('New barcode record saved successfully!', { variant: 'success' });
         fetchAllInfo() // Refresh the records list
       } else {
         throw new Error(data.detail || 'Save failed')
       }
     } catch (err) {
-      alert('Save failed: ' + err.message)
+      enqueueSnackbar('Save failed: ' + err.message, { variant: 'error' });
     }
   }
   const deleteBarcodeRecord = async (barcode, email) => {
@@ -392,13 +394,13 @@ function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, h
       });
       const data = await response.json();
       if (data.success) {
-        alert('Barcode record deleted successfully!');
+        enqueueSnackbar('Barcode record deleted successfully!', { variant: 'success' });
         fetchAllInfo();
       } else {
         throw new Error(data.detail || 'Failed to delete barcode record');
       }
     } catch (error) {
-      alert('Error deleting barcode record: ' + error.message);
+      enqueueSnackbar('Error deleting barcode record: ' + error.message, { variant: 'error' });
     }
   };
 
@@ -416,11 +418,12 @@ function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, h
       const result = await resp.json()
       if (resp.ok) {
         await fetchAllInfo()
+        enqueueSnackbar('CSV uploaded successfully!', { variant: 'success' });
       } else {
-        alert(result.detail || "Upload failed.")
+        enqueueSnackbar(result.detail || "Upload failed.", { variant: 'error' });
       }
     } catch (err) {
-      alert('Failed to upload CSV.')
+      enqueueSnackbar('Failed to upload CSV.', { variant: 'error' });
     }
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
@@ -440,13 +443,13 @@ function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, h
       })
       const data = await response.json()
       if (data.success) {
-        alert('Image added successfully to record!')
+        enqueueSnackbar('Image added successfully to record!', { variant: 'success' });
         fetchAllInfo() // Refresh the records list
       } else {
         throw new Error(data.detail || 'Failed to add image')
       }
     } catch (error) {
-      alert('Error adding image: ' + error.message)
+      enqueueSnackbar('Error adding image: ' + error.message, { variant: 'error' });
     }
   }
 
@@ -463,14 +466,14 @@ function AdminPanel({ user, handleLogout, setPage, currentPage, toggleSidebar, h
           }),
         })
         const data = await response.json()
-        if (data.success) {
-          alert('Image deleted successfully!')
-          fetchAllInfo() // Refresh the records list
+      if (data.success) {
+        enqueueSnackbar('Image deleted successfully!', { variant: 'success' });
+        fetchAllInfo() // Refresh the records list
         } else {
-          throw new Error(data.detail || 'Failed to delete image')
+          enqueueSnackbar(data.detail || 'Failed to delete image', { variant: 'error' });
         }
       } catch (error) {
-        alert('Error deleting image: ' + error.message)
+        enqueueSnackbar('Error deleting image: ' + error.message, { variant: 'error' });
       }
     }
   }

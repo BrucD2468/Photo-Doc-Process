@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Box, Button, IconButton, Tooltip } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
 import Login from './Login'
 import Register from './Register'
 import BarcodeScanPage from './BarcodeScanPage'
@@ -14,12 +12,17 @@ import ShippingPage from './ShippingPage'
 import ShippedShipmentsPage from './ShippedShipmentsPage'
 import PalletFilteringPage from './PalletFilteringPage'
 import Sidebar from './Sidebar' // Import Sidebar
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useSnackbar } from 'notistack';
 
 import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || ""
 
 function App() {
+  const { enqueueSnackbar } = useSnackbar();
   const [user, setUser] = useState(null)
   const [page, _setPage] = useState('login') // Internal state for current page
   const [pageHistory, setPageHistory] = useState(['login']) // History stack for navigation
@@ -39,7 +42,7 @@ function App() {
 
   const handleSetAdminPanelTab = (tab) => {
     setAdminPanelTab(tab)
-    _setPage('admin') // Navigate to admin page when setting an admin tab
+    setPage('admin') // Navigate to admin page when setting an admin tab, using the history-managing setPage
     setIsSidebarOpen(false) // Close sidebar after selection
   }
 
@@ -98,6 +101,7 @@ function App() {
   const [enableCustomerFilter, setEnableCustomerFilter] = useState(false); // New state for enabling customer filter
   const [currentFilteredPalletRecords, setCurrentFilteredPalletRecords] = useState([]) // State for records on PalletFilteringPage
   const [selectedFilteredShippingList, setSelectedFilteredShippingList] = useState(null) // State for selected filtered shipping list
+  const [isPalletPageLoading, setIsPalletPageLoading] = useState(false) // New state for PalletPage loading
 
 
   const mediaCaptureHeaderTitle = captureBarcodeForGallery ? 
@@ -189,6 +193,7 @@ function App() {
 
   const handleBarcodeSearchAndNavigate = async (barcode) => {
     if (!barcode) return
+    setIsPalletPageLoading(true) // Set loading to true
     try {
       const response = await fetch(`${API_URL}/api/barcode/search?barcode=${barcode}`)
       if (!response.ok) {
@@ -198,11 +203,13 @@ function App() {
       if (data.records && data.records.length > 0) {
         navigateToPalletPage(data.records)
       } else {
-        alert('No records found for this barcode.')
+        enqueueSnackbar('No records found for this barcode.', { variant: 'info' });
       }
     } catch (error) {
       console.error('Error searching barcode:', error)
-      alert('Error searching barcode: ' + error.message)
+      enqueueSnackbar('Error searching barcode: ' + error.message, { variant: 'error' });
+    } finally {
+      setIsPalletPageLoading(false) // Set loading to false
     }
   }
 
@@ -281,7 +288,7 @@ function App() {
         throw new Error(data.detail || 'Failed to add image')
       }
     } catch (error) {
-      alert('Error adding image: ' + error.message)
+      enqueueSnackbar('Error adding image: ' + error.message, { variant: 'error' });
     }
   }
 
@@ -305,10 +312,10 @@ function App() {
             images: prev.images.filter((_, i) => i !== index)
           }))
         } else {
-          throw new Error(data.detail || 'Failed to delete image')
+          enqueueSnackbar(data.detail || 'Failed to delete image', { variant: 'error' });
         }
       } catch (error) {
-        alert('Error deleting image: ' + error.message)
+        enqueueSnackbar('Error deleting image: ' + error.message, { variant: 'error' });
       }
     }
   }
@@ -319,14 +326,14 @@ function App() {
 
 
   return (
-    <div className="app">
+    <div className={`app ${user && user.role === 1 && page === 'admin' ? 'admin-theme' : ''}`}>
       {user && user.role === 1 && ( // Render sidebar only if user is logged in AND is an admin
         <Sidebar
           ref={sidebarRef}
           isSidebarOpen={isSidebarOpen}
           closeSidebar={toggleSidebar}
           setAdminPanelTab={handleSetAdminPanelTab} // Pass the new handler
-          setPage={_setPage} // Pass the internal _setPage to directly change the page
+          setPage={setPage} // Pass the history-managing setPage
         />
       )}
 
@@ -439,13 +446,12 @@ function App() {
                     </div>
                 </div>
               )}
-              <MyInfo user={user} setPage={setPage} API_URL={API_URL} />
               <button onClick={() => setPage('shippedShipmentsPage')} className="shipped-shipments-button">
                 View Shipped Shipments
               </button>
             </>
-          )}
 
+          )}
           {page === 'admin' && (
             <AdminPanel
               user={user}
@@ -466,6 +472,7 @@ function App() {
               records={palletRecords}
               onSelectBarcode={navigateToImageGalleryPage}
               API_URL={API_URL}
+              loading={isPalletPageLoading} // Pass loading state
               UserMenuComponent={() => (
                 <UserMenuComponent
                   ref={userMenuRef}

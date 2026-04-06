@@ -55,7 +55,7 @@ function BarcodeInputModal({ onClose, onBarcodeScannedOrEntered }) {
           BOL Number:
           <input type="text" value={bolNumber} onChange={(e) => setBolNumber(e.target.value)} placeholder="Enter BOL number" />
         </label>
-        <button onClick={handleNext}>Save</button>
+        <button onClick={handleNext} className="save-button">Save</button>
         <button onClick={onClose} className="icon-button delete-btn" title="Cancel">✖️</button>
       </div>
     </div>

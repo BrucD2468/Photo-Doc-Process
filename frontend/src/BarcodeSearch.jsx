@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import BarcodeScanner from './BarcodeScanner'
-import { Button, TextField, Stack, Tooltip, Box } from '@mui/material'
+import { Button, TextField, Stack, Tooltip, Box, InputAdornment } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner'
 import CameraAltIcon from '@mui/icons-material/CameraAlt'
@@ -57,7 +57,30 @@ function BarcodeSearch({ onSearch }) {
               }}
               fullWidth
               size="small"
-              sx={{ flexGrow: 1 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                flexGrow: 1,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '25px', // Rounded corners
+                  transition: 'border-color 0.3s ease-in-out', // Smooth transition for border
+                  '& fieldset': {
+                    borderColor: 'rgba(0, 0, 0, 0.23)', // Default border color
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0, 0, 0, 0.87)', // Border color on hover
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'primary.main', // Border color on focus
+                    borderWidth: '1px', // Keep border width consistent
+                  },
+                },
+              }}
             />
             <Tooltip title="Search Barcode">
               <Button variant="contained" onClick={handleSearch} startIcon={<SearchIcon />}>

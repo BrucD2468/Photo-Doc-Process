@@ -1,3 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Color Palette */
+  --color-primary-50: hsl(220, 70%, 95%);
+  --color-primary-100: hsl(220, 70%, 90%);
+  --color-primary-200: hsl(220, 70%, 80%);
+  --color-primary-300: hsl(220, 70%, 70%);
+  --color-primary-400: hsl(220, 70%, 60%);
+  --color-primary: hsl(220, 70%, 55%); /* Softer primary blue */
+  --color-primary-600: hsl(220, 70%, 50%);
+  --color-primary-700: hsl(220, 70%, 45%);
+  --color-primary-800: hsl(220, 70%, 40%);
+  --color-primary-900: hsl(220, 70%, 30%);
+
+  --color-success-50: hsl(140, 60%, 95%);
+  --color-success-100: hsl(140, 60%, 90%);
+  --color-success-200: hsl(140, 60%, 80%);
+  --color-success-300: hsl(140, 60%, 70%);
+  --color-success-400: hsl(140, 60%, 60%);
+  --color-success: hsl(140, 60%, 40%); /* Green */
+  --color-success-600: hsl(140, 60%, 35%);
+  --color-success-700: hsl(140, 60%, 30%);
+  --color-success-800: hsl(140, 60%, 25%);
+  --color-success-900: hsl(140, 60%, 20%);
+  --color-warning: hsl(30, 80%, 55%); /* Orange */
+  --color-error: hsl(0, 70%, 50%);   /* Red */
+
+  --color-neutral-50: #f8f9fa;
+  --color-neutral-100: #e9ecef;
+  --color-neutral-200: #dee2e6;
+  --color-neutral-300: #ced4da;
+  --color-neutral-400: #adb5bd;
+  --color-neutral-500: #6c757d;
+  --color-neutral-600: #495057;
+  --color-neutral-700: #343a40;
+  --color-neutral-800: #212529;
+  --color-neutral-900: #1a1d20;
+
+  /* Text Colors */
+  --text-color-primary: var(--color-neutral-800);
+  --text-color-secondary: var(--color-neutral-600);
+  --text-color-light: var(--color-neutral-50);
+
+  /* Spacing */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,10 +65,10 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--color-neutral-50);
   min-height: 100vh;
-  color: #222;
+  color: var(--text-color-primary);
 }
 
 /* Table readability improvements */
@@ -18,36 +78,107 @@ table {
 }
 
 th, td {
-  border: 1px solid #ddd; /* Light grey border */
-  padding: 8px;
+  border: 1px solid var(--color-neutral-300); /* Light grey border */
+  padding: var(--spacing-xs);
   text-align: left;
 }
 
 th {
-  background-color: #f2f2f2; /* Light background for table headers */
+  background-color: var(--color-neutral-100); /* Light background for table headers */
 }
 
 /* Optional: Zebra striping for rows */
 tr:nth-child(even) {
-  background-color: #f9f9f9; /* Slightly different background for even rows */
+  background-color: var(--color-neutral-50); /* Slightly different background for even rows */
 }
 
-/* Global styles for the app */
-
-.shipping-lists-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  padding: 20px;
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background: var(--color-neutral-800);
+  color: var(--text-color-light);
+  padding-top: var(--spacing-xl);
+  transform: translateX(-100%); /* Start off-screen */
+  transition: transform 0.3s ease-out;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
 }
+
+.sidebar.open {
+  transform: translateX(0); /* Slide in */
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
+.sidebar-overlay.open {
+  display: block;
+}
+
+.sidebar nav {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-item,
+.sidebar-subitem {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-item:hover,
+.sidebar-subitem:hover {
+  background-color: var(--color-neutral-700);
+}
+
+.sidebar-item-label {
+  flex-grow: 1;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.sidebar-item svg,
+.sidebar-subitem svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary-200);
+}
+
+.submenu-arrow {
+  transition: transform 0.2s ease;
+}
+
+.submenu-arrow.open {
+  transform: rotate(180deg);
+}
+
 .shipping-list-item {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 15px;
+  background: var(--color-neutral-50);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--spacing-md);
   cursor: pointer;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
@@ -57,7 +188,7 @@ tr:nth-child(even) {
 }
 .card-icon-container {
   flex-shrink: 0;
-  color: #007bff;
+  color: var(--color-primary-600);
 }
 .card-icon-container svg {
   display: block;
@@ -70,20 +201,20 @@ tr:nth-child(even) {
 .shipment-name {
   font-size: 1.1em;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
+  color: var(--text-color-primary);
+  margin-bottom: var(--spacing-xxs);
 }
 .shipment-date {
   font-size: 0.9em;
-  color: #666;
+  color: var(--text-color-secondary);
 }
 
 .auth-container {
   max-width: 420px;
-  margin: 50px auto;
-  padding: 35px;
-  background: rgba(240, 240, 240, 0.98);
-  border-radius: 20px;
+  margin: var(--spacing-xxl) auto;
+  padding: var(--spacing-xl);
+  background: var(--color-neutral-100);
+  border-radius: var(--border-radius-xl);
   box-shadow: 0 15px 40px rgba(0,0,0,0.15);
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -93,7 +224,7 @@ tr:nth-child(even) {
 @keyframes authFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(var(--spacing-lg)) scale(0.95);
   }
   to {
     opacity: 1;
@@ -102,49 +233,49 @@ tr:nth-child(even) {
 }
 
 .auth-container h2 {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
   text-align: center;
-  color: #4a5568;
+  color: var(--text-color-primary);
   font-weight: 600;
 }
 
 .auth-container form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: var(--spacing-md);
 }
 
 .auth-container input {
-  padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: var(--spacing-sm);
+  border: 2px solid var(--color-neutral-200);
+  border-radius: var(--border-radius-md);
   font-size: 14px;
   transition: border-color 0.3s;
 }
 
 .auth-container input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px hsla(220, 70%, 55%, 0.1);
 }
 
 .auth-container button {
     display: inline-block;
     font-family: inherit;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #4446d6 0%, #364ebb 100%);
-  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-900) 100%);
+  color: var(--text-color-light);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--border-radius-lg);
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 var(--spacing-sm) var(--spacing-lg) hsla(220, 70%, 55%, 0.4);
   position: relative;
   overflow: hidden;
   width: 100%;
-  margin-top: 10px;
+  margin-top: var(--spacing-xs);
 }
 
 .auth-container button::before {
@@ -164,27 +295,27 @@ tr:nth-child(even) {
 
 .auth-container button:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.6);
-  background: linear-gradient(135deg, #45a049 0%, #388e3c 100%);
+  box-shadow: 0 var(--spacing-sm) var(--spacing-xl) hsla(140, 60%, 40%, 0.6);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%);
 }
 
 .auth-container button:active {
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 var(--spacing-xs) var(--spacing-lg) hsla(140, 60%, 40%, 0.5);
 }
 
 .auth-container button:focus {
   outline: none;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4), 0 0 0 3px rgba(76, 175, 80, 0.2);
+  box-shadow: 0 var(--spacing-sm) var(--spacing-lg) hsla(140, 60%, 40%, 0.4), 0 0 0 3px hsla(140, 60%, 40%, 0.2);
 }
 
 .auth-container p {
   text-align: center;
-  margin-top: 15px;
+  margin-top: var(--spacing-md);
 }
 
 .auth-container a {
-  color: #667eea;
+  color: var(--color-primary);
   cursor: pointer;
   text-decoration: none;
   font-weight: 500;
@@ -195,84 +326,99 @@ tr:nth-child(even) {
 }
 
 .error {
-  color: #e53e3e;
+  color: var(--color-error);
   font-size: 14px;
   text-align: center;
 }
 
 .success {
-  color: #38a169;
+  color: var(--color-success);
   font-size: 14px;
   text-align: center;
 }
 
 .app {
-  padding: 20px;
+  padding: var(--spacing-lg);
   text-align: center;
   max-width: 1200px;
   margin: 0 auto;
 }
 
+.main-content {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Admin Tab Buttons */
 .admin-tabs {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
   display: flex;
   justify-content: flex-start;
-  gap: 10px;
+  gap: var(--spacing-xs);
 }
 
 .admin-tab-button {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); /* Green */
-  color: white;
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%); /* Green */
+  color: var(--text-color-light);
   border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xs) var(--spacing-md);
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 150px; /* Default width */
   font-size: 16px;
   font-weight: 500;
-  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xs) hsla(140, 60%, 40%, 0.3);
 }
 
 .admin-tab-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 var(--spacing-sm) var(--spacing-md) hsla(140, 60%, 40%, 0.5);
 }
 
 .admin-tab-button.active {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue for active tab */
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%); /* Blue for active tab */
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xs) hsla(220, 70%, 55%, 0.4);
   transform: translateY(-1px);
 }
 
 /* Specific style for admin panel buttons to be blue and narrower */
 .admin-tab-button.blue-narrow {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue */
-  padding: 8px 12px;
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%); /* Blue */
+  padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 16px;
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xs) hsla(220, 70%, 55%, 0.3);
 }
 
 .admin-tab-button.blue-narrow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 var(--spacing-sm) var(--spacing-md) hsla(220, 70%, 55%, 0.5);
 }
 
 /* Styling for table action buttons (Edit/Delete users, Manage Images/Delete Barcode) */
 .action-button-blue {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue */
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%); /* Blue */
+  color: var(--text-color-light);
   border: none;
-  border-radius: 6px;
-  padding: 6px 10px; /* Smaller padding */
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xxs) var(--spacing-xs); /* Smaller padding */
   cursor: pointer;
   transition: all 0.3s ease;
   width: 70px; /* Further reduced width */
   font-size: 13px;
   font-weight: 500;
-  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
-  margin: 2px; /* Small margin for spacing between buttons */
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xxs) hsla(220, 70%, 55%, 0.2);
+  margin: var(--spacing-xxs); /* Small margin for spacing between buttons */
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
@@ -280,13 +426,13 @@ tr:nth-child(even) {
 
 .action-button-blue:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
-  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xs) hsla(220, 70%, 55%, 0.4);
+  background: linear-gradient(135deg, var(--color-primary-800) 0%, var(--color-primary-900) 100%);
 }
 
 .action-button-blue:active {
   transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xxs) hsla(220, 70%, 55%, 0.3);
 }
 
 /* General styles for new pages with header */
@@ -294,28 +440,28 @@ tr:nth-child(even) {
   display: flex;
   justify-content: center; /* Aligns content to the center */
   align-items: center;
-  margin-bottom: 20px;
-  gap: 10px; /* Added for spacing between header elements */
-  padding: 15px 20px;
-  background: #2645ce;
-  border-radius: 15px;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-xs); /* Added for spacing between header elements */
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-primary-700);
+  border-radius: var(--border-radius-xl);
   backdrop-filter: blur(10px);
-  color: white; /* Ensure header text is white */
+  color: var(--text-color-light); /* Ensure header text is white */
 }
 
 .header h1, .header h2, .header h3 {
   font-size: 28px;
   margin: 0;
   line-height: 28px; /* Match the SVG height */
-  color: white;
+  color: var(--text-color-light);
   text-align: center; /* Center the text within its allocated space */
   flex-grow: 1; /* Allow header text to take available space */
 }
 
 .header .icon-button {
-  background: #2645ce;
+  background: var(--color-primary-700);
   border: none;
-  color: white;
+  color: var(--text-color-light);
   cursor: pointer;
   padding: 5px;
   height: 28px;
@@ -328,7 +474,7 @@ tr:nth-child(even) {
 }
 
 .header .icon-button:hover {
-  color: #cccccc;
+  color: var(--color-neutral-300);
 }
 
 .header .icon-button svg {
@@ -339,24 +485,24 @@ tr:nth-child(even) {
 /* Pallet Page Styles */
 .pallet-page {
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-lg);
 }
 
 .pallet-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  background: rgba(240, 240, 240, 0.9);
-  border-radius: 15px;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--color-neutral-100);
+  border-radius: var(--border-radius-xl);
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .pallet-card {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
+  background: var(--color-neutral-50);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
@@ -371,18 +517,18 @@ tr:nth-child(even) {
 
 .pallet-card .top-right-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: linear-gradient(135deg, #4CAF50 0%, #388e3c 100%);
-  color: white;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%);
+  color: var(--text-color-light);
   border: none;
-  border-radius: 8px;
-  padding: 6px 10px; /* Reverted global padding to 8px 12px */
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xxs) var(--spacing-xs); /* Reverted global padding to 8px 12px */
   font-size: 12px; /* Adjusted font size */
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px; /* Adjusted gap */
+  gap: var(--spacing-xxs); /* Adjusted gap */
   transition: all 0.3s ease;
   z-index: 10;
   white-space: nowrap;
@@ -390,9 +536,9 @@ tr:nth-child(even) {
 }
 
 .pallet-card .top-right-button:hover {
-  background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(56, 142, 60, 0.4);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-xs) hsla(140, 60%, 40%, 0.4);
 }
 
 .pallet-card .top-right-button svg {
@@ -402,20 +548,20 @@ tr:nth-child(even) {
 
 .pallet-card h3 {
   font-size: 22px;
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--text-color-primary);
+  margin-bottom: var(--spacing-xs);
 }
 
 .pallet-card p {
   font-size: 15px;
-  color: #555;
-  margin-bottom: 5px;
+  color: var(--text-color-secondary);
+  margin-bottom: var(--spacing-xxs);
 }
 
 /* Image Gallery Page Styles */
 .image-item {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   aspect-ratio: 1 / 1; /* Square images */
@@ -434,14 +580,14 @@ tr:nth-child(even) {
   left: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
-  color: white;
-  padding: 8px;
+  color: var(--text-color-light);
+  padding: var(--spacing-xs);
   font-size: 12px;
   text-align: left;
   line-height: 1.4;
   /* Add border-radius to match image-container top, but only bottom corners */
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: var(--border-radius-md);
+  border-bottom-right-radius: var(--border-radius-md);
 }
 
 .image-metadata p {
@@ -454,8 +600,8 @@ tr:nth-child(even) {
 }
 .image-gallery-page {
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-lg);
 }
 
 .image-gallery-page .header h2 {
@@ -465,17 +611,17 @@ tr:nth-child(even) {
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-  padding: 20px;
-  background: rgba(240, 240, 240, 0.9);
-  border-radius: 15px;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--color-neutral-100);
+  border-radius: var(--border-radius-xl);
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .image-container {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   aspect-ratio: 1 / 1; /* Square images */
@@ -489,8 +635,8 @@ tr:nth-child(even) {
 
 .delete-image-button {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
   background: rgba(128, 139, 151, 0.8) !important;
   border-radius: 50% !important;
   width: 36px !important;
@@ -505,7 +651,7 @@ tr:nth-child(even) {
   padding:16px 16px;
 }
 .delete-image-button p{
-  color:white;
+  color:var(--text-color-light);
 }
 
 .delete-image-button:hover {
@@ -514,7 +660,7 @@ tr:nth-child(even) {
 }
 
 .gallery-actions {
-  margin-top: 30px;
+  margin-top: var(--spacing-xl);
   text-align: center;
 }
 
@@ -524,24 +670,24 @@ tr:nth-child(even) {
   padding: 18px 35px;
   font-size: 18px;
   font-weight: 600;
-  background: linear-gradient(135deg, #31724a 0%, #2b7958 100%); /* Blue gradient */
-  color: white;
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%); /* Blue gradient */
+  color: var(--text-color-light);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--border-radius-lg);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(65, 122, 103, 0.4);
+  box-shadow: 0 var(--spacing-sm) var(--spacing-lg) hsla(140, 60%, 40%, 0.4);
   position: relative;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--spacing-xs);
 }
 
 .gallery-actions .scan-button:hover {
-  background: linear-gradient(135deg, #316e61 0%, #2f8174 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%);
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 12px 35px rgba(50, 107, 93, 0.6);
+  box-shadow: 0 var(--spacing-lg) var(--spacing-xxl) hsla(140, 60%, 40%, 0.6);
 }
 
 .gallery-actions .scan-button svg {
@@ -603,22 +749,34 @@ tr:nth-child(even) {
 }
 
 .shipped-shipments-button {
-  padding: 12px 20px;
-  font-size: 16px;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue gradient */
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: 14px;
+  background-color: var(--color-neutral-100); /* Light grey background */
+  color: var(--text-color-primary); /* Darker text color */
+  border: 1px solid var(--color-neutral-300); /* Subtle border */
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-sm) hsla(0, 0%, 0%, 0.05);
+  margin-top: var(--spacing-md); /* Add some space above */
+  width: auto; /* Allow button to size to content */
+  display: inline-block; /* Make it inline-block to respect width: auto */
 }
 
 .shipped-shipments-button:hover {
-  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-  box-shadow: 0 12px 35px rgba(0, 123, 255, 0.6);
+  background-color: var(--color-neutral-200); /* Slightly darker grey on hover */
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-md) hsla(0, 0%, 0%, 0.1);
+  transform: translateY(-2px);
 }
 
 .shipped-shipments-button:active {
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .shipped-shipments-button:focus {
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4), 0 0 0 3px rgba(0, 123, 255, 0.2);
+  outline: none;
+  box-shadow: 0 0 0 3px hsla(220, 70%, 55%, 0.4); /* Use primary color for focus ring */
 }
 
 @media (max-width: 480px) {
@@ -652,22 +810,22 @@ tr:nth-child(even) {
   }
 
 .barcode-search .scan-button {
-  padding: 12px 12px;
+  padding: var(--spacing-sm) var(--spacing-sm);
   font-size: 16px;
-  background-color: #085308;
-  color: white;
+  background-color: var(--color-success); /* Use success color */
+  color: var(--text-color-light);
 }
 
 /* Green Button Style */
 .green-button {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); /* Green gradient */
-  color: white;
+  background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%); /* Green gradient */
+  color: var(--text-color-light);
   border: none;
-  border-radius: 8px;
-  padding: 6px 10px; /* Smaller padding */
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xxs) var(--spacing-xs); /* Smaller padding */
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-sm) hsla(140, 60%, 40%, 0.2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -675,13 +833,29 @@ tr:nth-child(even) {
 
 .green-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
-  background: linear-gradient(135deg, #45a049 0%, #388e3c 100%);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-md) hsla(140, 60%, 40%, 0.4);
+  background: linear-gradient(135deg, var(--color-success-700) 0%, var(--color-success-800) 100%);
 }
 
 .green-button:active {
   transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 var(--spacing-xxs) var(--spacing-sm) hsla(140, 60%, 40%, 0.3);
+}
+
+/* Save Button Style */
+.save-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.save-button:hover {
+  background-color: var(--color-primary-700); /* Use a darker primary color from palette */
 }
 
 /* Adjust existing button styles to avoid conflicts with dropdown items */
@@ -691,6 +865,103 @@ button.icon-button { /* Keep this if you still have other icon buttons */
 }
 
 /* User Menu and Dropdown Styles */
+
+.admin-theme {
+  /* Neutral/Darker Palette for Admin */
+  --color-primary: hsl(210, 10%, 30%); /* Darker primary for admin */
+  --color-primary-light: hsl(210, 10%, 40%);
+  --color-primary-dark: hsl(210, 10%, 20%);
+
+  --color-primary-50: hsl(210, 10%, 95%);
+  --color-primary-100: hsl(210, 10%, 90%);
+  --color-primary-200: hsl(210, 10%, 80%);
+  --color-primary-300: hsl(210, 10%, 70%);
+  --color-primary-400: hsl(210, 10%, 60%);
+  --color-primary-500: hsl(210, 10%, 50%);
+  --color-primary-600: hsl(210, 10%, 40%);
+  --color-primary-700: hsl(210, 10%, 30%);
+  --color-primary-800: hsl(210, 10%, 20%);
+  --color-primary-900: hsl(210, 10%, 10%);
+
+  --color-neutral-50: hsl(0, 0%, 95%);
+  --color-neutral-100: hsl(0, 0%, 90%);
+  --color-neutral-200: hsl(0, 0%, 80%);
+  --color-neutral-300: hsl(0, 0%, 70%);
+  --color-neutral-400: hsl(0, 0%, 60%);
+  --color-neutral-500: hsl(0, 0%, 50%);
+  --color-neutral-600: hsl(0, 0%, 40%);
+  --color-neutral-700: hsl(0, 0%, 30%);
+  --color-neutral-800: hsl(0, 0%, 20%);
+  --color-neutral-900: hsl(0, 0%, 10%);
+
+  --background-color: var(--color-neutral-100);
+  --surface-color: var(--color-neutral-50);
+  --text-color-primary: var(--color-neutral-900);
+  --text-color-secondary: var(--color-neutral-700);
+  --border-color: var(--color-neutral-300);
+
+  /* Specific overrides for admin panel elements */
+  .admin-panel {
+    background-color: var(--background-color);
+    color: var(--text-color-primary);
+  }
+
+  .admin-panel .header {
+    background-color: var(--color-primary-700);
+    color: white;
+  }
+
+  .admin-panel .header .icon-button {
+    color: white;
+  }
+
+  .admin-panel .sidebar {
+    background-color: var(--color-primary-900);
+  }
+
+  .admin-panel .sidebar-item {
+    color: var(--color-neutral-100);
+  }
+
+  .admin-panel .sidebar-item:hover {
+    background-color: var(--color-primary-800);
+  }
+
+  .admin-panel .sidebar-item.active {
+    background-color: var(--color-primary-700);
+    color: white;
+  }
+
+  /* DataGrid overrides for admin */
+  .admin-panel .MuiDataGrid-root {
+    background-color: var(--surface-color);
+    color: var(--text-color-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .admin-panel .MuiDataGrid-columnHeaders {
+    background-color: var(--color-neutral-200);
+    color: var(--text-color-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .admin-panel .MuiDataGrid-cell {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .admin-panel .MuiDataGrid-row:nth-of-type(odd) {
+    background-color: var(--color-neutral-50);
+  }
+
+  .admin-panel .MuiDataGrid-toolbarContainer {
+    background-color: var(--color-neutral-100);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .admin-panel .MuiInputBase-root {
+    color: var(--text-color-primary);
+  }
+}
 .user-menu {
   position: relative;
   z-index: 10000; /* Ensure the dropdown appears above other content */
@@ -710,12 +981,12 @@ button.icon-button { /* Keep this if you still have other icon buttons */
   font-size: 24px; /* Adjust size as needed */
   cursor: pointer;
   padding: 0;
-  color: white; /* Icon color */
+  color: var(--text-color-light); /* Icon color */
   transition: color 0.3s ease;
 }
 
 .user-icon-button:hover {
-  color: #cccccc; /* Hover color */
+  color: var(--color-neutral-300); /* Hover color */
 }
 
 .dropdown-menu {
@@ -723,27 +994,27 @@ button.icon-button { /* Keep this if you still have other icon buttons */
   top: 100%; /* Position below the button */
   right: 0;
   transform: translateZ(0); /* Forces new stacking context */
-  background-color: white;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  border-radius: 8px;
+  background-color: var(--color-neutral-50);
+  box-shadow: 0 var(--spacing-xs) var(--spacing-md) hsla(0, 0%, 0%, 0.2);
+  border-radius: var(--border-radius-md);
   min-width: 160px;
   z-index: 10001;
   display: flex;
   flex-direction: column;
-  padding: 10px 0;
+  padding: var(--spacing-xs) 0;
   animation: fadeIn 0.2s ease-out;
   height: auto;
   width: auto;
 }
 
 .dropdown-menu .dropdown-item {
-  padding: 12px 15px;
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: #333;
+  color: var(--text-color-primary);
   transition: background-color 0.2s ease;
   width: 100%; /* Ensure full width of the dropdown */
   border-radius: 0; /* Remove button border-radius */
@@ -1102,8 +1373,15 @@ button:focus {
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align to the top */
+  padding-top: var(--spacing-xxl); /* Add some padding from the top */
   z-index: 1000;
+}
+
+@media (max-width: 600px) {
+  .modal-backdrop {
+    padding-top: var(--spacing-xl); /* Less padding for smaller screens */
+  }
 }
 
 .modal-content {

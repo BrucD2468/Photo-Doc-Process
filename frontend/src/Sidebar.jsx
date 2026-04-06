@@ -14,7 +14,7 @@ const Sidebar = React.forwardRef(({ setAdminPanelTab, setPage, closeSidebar, isS
   };
 
   const handleAppPageClick = () => {
-    setPage('myInfo'); // Assuming 'myInfo' is the user panel/app page
+    setPage('myInfo'); // Use the history-managing setPage prop
     closeSidebar();
   };
 
