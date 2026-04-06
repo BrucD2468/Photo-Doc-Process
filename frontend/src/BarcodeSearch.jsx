@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import BarcodeScanner from './BarcodeScanner'
+import { Button, TextField, Stack, Tooltip, Box } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner'
+import CameraAltIcon from '@mui/icons-material/CameraAlt'
+import CancelIcon from '@mui/icons-material/Cancel'
 
-function BarcodeSearch({ onSearch, showSearchButton = false, initialBarcode = '' }) {
-  const [barcode, setBarcode] = useState(initialBarcode)
+function BarcodeSearch({ onSearch }) {
+  const [barcode, setBarcode] = useState('')
   const [scanning, setScanning] = useState(false)
   const [scanMode, setScanMode] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
@@ -15,23 +20,15 @@ function BarcodeSearch({ onSearch, showSearchButton = false, initialBarcode = ''
     console.log('Mobile detection:', { userAgent, isMobileDevice, width: window.innerWidth, height: window.innerHeight })
   }, [])
 
+  const handleSearch = () => {
+    if (barcode) onSearch(barcode)
+  }
+
   const handleDetected = (code) => {
     setBarcode(code)
     setScanning(false)
     setScanMode(null)
     onSearch(code)
-  }
-
-  const handleInputChange = (e) => {
-    const newValue = e.target.value
-    setBarcode(newValue)
-    if (!showSearchButton) {
-      onSearch(newValue)
-    }
-  }
-
-  const handleSearchClick = () => {
-    onSearch(barcode)
   }
 
   const startScan = () => {
@@ -44,55 +41,78 @@ function BarcodeSearch({ onSearch, showSearchButton = false, initialBarcode = ''
   }
 
   return (
-    <div className="barcode-search">
+    <Box sx={{ padding: 2 }}>
       {!scanning ? (
-        <div className="search-input">
-          <div className="input-search-group">
-            <input
-              type="text"
-              placeholder="🔍Enter barcode..."
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <TextField
+              label="Enter barcode"
+              variant="outlined"
               value={barcode}
-              onChange={handleInputChange}
+              onChange={(e) => setBarcode(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+              fullWidth
+              size="small"
+              sx={{ flexGrow: 1 }}
             />
-          </div>
-          {showSearchButton ? (
-            <button onClick={handleSearchClick} className="search-button">
-              Search
-            </button>
-          ) : (
-            <button onClick={startScan} className="scan-button">
-              <svg width="40" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}>
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"></path>
-              </svg>
-              Scan Barcode
-            </button>
-          )}
-        </div>
+            <Tooltip title="Search Barcode">
+              <Button variant="contained" onClick={handleSearch} startIcon={<SearchIcon />}>
+                Search
+              </Button>
+            </Tooltip>
+          </Stack>
+          <Tooltip title="Scan Barcode">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={startScan}
+                startIcon={<QrCodeScannerIcon />}
+                sx={{
+                  marginTop: 2,
+                  width: '100%',
+                  paddingY: 1.5,
+                  fontSize: '1.1rem',
+                }}
+              >
+                Scan Barcode
+              </Button>
+            </Tooltip>
+          </Box>
       ) : (
         !scanMode ? (
-          <div className="scan-mode-choice" style={{textAlign:'center',padding:'24px'}}>
+          <Box sx={{textAlign:'center',padding:'24px'}}>
             <p style={{fontWeight:'bold',fontSize:'16px'}}>Select scan method:</p>
-            <div style={{display:'flex', justifyContent:'center', gap:'14px'}}>
-              <button onClick={() => chooseMode('camera')} className="barcode-search-button">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}>
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"></path>
-                </svg>
-                Camera
-              </button>
-              <button onClick={() => setScanning(false)} className="barcode-search-button">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '6px'}}>
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="m15 9-6 6m0-6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Cancel
-              </button>
-            </div>
-          </div>
+            <Stack direction="row" spacing={2} justifyContent="center">
+              <Tooltip title="Scan with Camera">
+                <Button
+                  variant="contained"
+                  onClick={() => chooseMode('camera')}
+                  startIcon={<CameraAltIcon />}
+                >
+                  Camera
+                </Button>
+              </Tooltip>
+              <Tooltip title="Cancel Scan">
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => setScanning(false)}
+                  startIcon={<CancelIcon />}
+                >
+                  Cancel
+                </Button>
+              </Tooltip>
+            </Stack>
+          </Box>
         ) : (
           <BarcodeScanner mode="camera" onDetected={handleDetected} onClose={() => { setScanning(false); setScanMode(null); }} />
         )
       )}
-    </div>
+    </Box>
   )
 }
 

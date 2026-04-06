@@ -1,8 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
 import ImageViewerModal from './ImageViewerModal';
-import './ImageCapture.css' // Link the new CSS file
 
-function MediaCapture({ onClose, onCapture, onDelete, onClear, onSave, allowSave = false, barcode, headerTitle, images: initialImages = [], currentUser }) {
+import { Button, IconButton, Tooltip, Stack, Box, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import ScreenShareIcon from '@mui/icons-material/ScreenShare';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import SaveIcon from '@mui/icons-material/Save';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+function MediaCapture({ onClose, onCapture, onDelete, onClear, onSave, allowSave = false, barcode, headerTitle, images: initialImages = [], currentUser, toggleSidebar, hamburgerButtonRef }) {
   const [mode, setMode] = useState(null)
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
@@ -166,52 +177,126 @@ function MediaCapture({ onClose, onCapture, onDelete, onClear, onSave, allowSave
   useEffect(() => () => stopStream(), [])
 
   return (
-    <div className="image-capture-container">
-      <div className="capture-header">
-        <button onClick={onClose} className="back-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-        </button>
-        <h2 className="header-title">{headerTitle || 'Image Capture'}</h2>
-      </div>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#222' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2, backgroundColor: '#333', color: '#fff' }}>
+        {currentUser && currentUser.role === 1 && (
+          <Tooltip title="Menu">
+            <IconButton ref={hamburgerButtonRef} onClick={toggleSidebar} color="inherit">
+              <MenuIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        <Typography variant="h6" component="h2" sx={{ margin: 0, fontSize: '1.2rem' }}>{headerTitle || 'Image Capture'}</Typography>
+          {mode === 'camera' && (
+            <Tooltip title="Close Camera">
+              <IconButton onClick={onClose} color="inherit">
+                <ArrowBackIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+      </Box>
 
       {/* Camera Preview Area */}
       {mode === 'camera' && streamRef.current && (
-        <div className="camera-preview-wrapper">
-          <video ref={videoRef} autoPlay playsInline muted className="camera-video" />
-          <div className="scan-guide-overlay">
-            <div className="corner-bracket top-left"></div>
-            <div className="corner-bracket top-right"></div>
-            <div className="corner-bracket bottom-left"></div>
-            <div className="corner-bracket bottom-right"></div>
-            <div className="scan-indicator-arrow">
+        <Box sx={{ position: 'relative', width: '100%', flexGrow: 1, overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
+          <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box sx={{ position: 'absolute', width: 20, height: 20, borderTop: '3px solid #fff', borderLeft: '3px solid #fff', top: 0, left: 0 }} />
+            <Box sx={{ position: 'absolute', width: 20, height: 20, borderTop: '3px solid #fff', borderRight: '3px solid #fff', top: 0, right: 0 }} />
+            <Box sx={{ position: 'absolute', width: 20, height: 20, borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', bottom: 0, left: 0 }} />
+            <Box sx={{ position: 'absolute', width: 20, height: 20, borderBottom: '3px solid #fff', borderRight: '3px solid #fff', bottom: 0, right: 0 }} />
+            <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', padding: '10px 15px', backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: '5px' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </div>
-          </div>
+            </Box>
+          </Box>
           <canvas ref={canvasRef} style={{ display: 'none' }} />
-        </div>
+        </Box>
       )}
 
       {/* Info/Error Messages */}
-      {error && <p className="error-message">{error}</p>}
-      {info && <p className="info-message">{info}</p>}
-
+      {error && <Typography color="error" textAlign="center" padding="8px">{error}</Typography>}
+      {info && <Typography color="success" textAlign="center" padding="8px">{info}</Typography>}
       {/* Bottom Control Panel */}
       {mode === 'camera' && (
-        <div className="capture-controls-bottom">
-          <button className="gallery-thumbnail-button" onClick={() => setShowImageViewer(true)}>
+
+      <Stack direction="row" justifyContent="space-around" alignItems="center" spacing={1} sx={{ width: '100%', padding: 2 }}>
+        <Tooltip title="View Gallery">
+          <IconButton
+            onClick={() => setShowImageViewer(true)}
+            color="primary"
+            size="large"
+            sx={{
+              width: 70,
+              height: 70,
+              borderRadius: '50%',
+              border: '2px solid #fff',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden',
+              p: 0,
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+            }}
+          >
             {capturedImages.length > 0 ? (
-              <img src={capturedImages[capturedImages.length - 1].url.startsWith('http') ? capturedImages[capturedImages.length - 1].url : `data:image/jpeg;base64,${capturedImages[capturedImages.length - 1].url}`} alt="Last capture" className="thumbnail-image" />
+              <img
+                src={capturedImages[capturedImages.length - 1].url.startsWith('http') ? capturedImages[capturedImages.length - 1].url : `data:image/jpeg;base64,${capturedImages[capturedImages.length - 1].url}`}
+                alt="Last capture"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+              <PhotoLibraryIcon sx={{ fontSize: 40, color: '#fff' }} />
             )}
-          </button>
-          <button className="shutter-button" onClick={capturePhoto} disabled={capturedImages.length >= MAX_IMAGES}>
-            <div className="shutter-inner-ring"></div>
-          </button>
-          <button className="camera-switch-button" onClick={() => alert('Switch Camera - TBD')}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-camera-off"><path d="M10.21 6.29A6 6 0 0 1 12 6a6 6 0 0 1 6 6v2"/><path d="M4 14a6 6 0 0 0 6 6h2"/><path d="M2 2l20 20"/><path d="m6 6 8.25 8.25"/><path d="M7.8 20.7L9 18h3.34L18 22h-8Z"/><path d="M16 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/><path d="M12 3a2 2 0 0 0-2 2h0"/><path d="M5 7L3 5"/></svg>
-          </button>
-        </div>
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Capture Photo">
+          <IconButton
+            onClick={capturePhoto}
+            disabled={capturedImages.length >= MAX_IMAGES}
+            color="primary"
+            size="large"
+            sx={{
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              border: '4px solid #fff',
+              backgroundColor: '#f44336',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              transition: 'background-color 0.3s ease',
+              p: 0,
+              '&:hover': { backgroundColor: '#d32f2f' },
+            }}
+          >
+            <CameraAltIcon sx={{ fontSize: 40, color: '#fff' }} />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Switch Camera (TBD)">
+          <IconButton
+            onClick={() => alert('Switch Camera - TBD')}
+            color="primary"
+            size="large"
+            sx={{
+              width: 70,
+              height: 70,
+              borderRadius: '50%',
+              border: '2px solid #fff',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              p: 0,
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+            }}
+          >
+            <CameraswitchIcon sx={{ fontSize: 40, color: '#fff' }} />
+          </IconButton>
+        </Tooltip>
+      </Stack>
       )}
 
       {showImageViewer && capturedImages.length > 0 && (
@@ -236,39 +321,114 @@ function MediaCapture({ onClose, onCapture, onDelete, onClear, onSave, allowSave
             </>
           )}
           <button onClick={onClose} className="icon-button delete-btn" title="Back">⬅️</button>
-        </div>
+        </Box>
       )} */}
 
       {/* Gallery display / manage captured images */}
       {capturedImages.length > 0 && !mode && (
-        <div>
-          <h3>Saved Images ({capturedImages.length}/{MAX_IMAGES})</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent:'center', marginBottom:16 }}>
+        <Box sx={{ flexGrow: 1, padding: 2, backgroundColor: '#333', color: '#fff', overflowY: 'auto' }}>
+          <Typography variant="h6">Saved Images ({capturedImages.length}/{MAX_IMAGES})</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent:'center', marginBottom:16 }}>
             {capturedImages.map((img, idx) => (
-              <div key={idx} style={{ position: 'relative' }}>
+              <Box key={idx} sx={{ position: 'relative' }}>
                 <img src={img.url.startsWith('http') ? img.url : `data:image/jpeg;base64,${img.url}`} alt={`Captured-${idx+1}`} style={{ width: 120, height: 90, objectFit:'cover', border: '1px solid #ccc', borderRadius:4 }} />
-                <button onClick={()=>deleteImage(idx)} style={{ position:'absolute', top:2, right:2, background:'rgba(255,255,255,0.8)', borderRadius:'50%', border:'none', cursor:'pointer', width:22, height:22, lineHeight:'14px', fontSize:17 }} title="Delete">×</button>
-              </div>
+                <Tooltip title="Delete Image">
+                  <IconButton
+                    onClick={() => deleteImage(idx)}
+                    sx={{
+                      position: 'absolute',
+                      top: 2,
+                      right: 2,
+                      background: 'rgba(255,255,255,0.8)',
+                      borderRadius: '50%',
+                      border: 'none',
+                      cursor: 'pointer',
+                      width: 28,
+                      height: 28,
+                      p: 0,
+                      '&:hover': { background: 'rgba(255,255,255,1)' }
+                    }}
+                    size="small"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             ))}
-          </div>
-          <div className="buttons">
+          </Box>
+          <Stack direction="row" spacing={1} justifyContent="center" sx={{ marginTop: 2, flexWrap: 'wrap' }}>
             {capturedImages.length < MAX_IMAGES && (
               isMobile ? (
-                <button onClick={startCamera} className="icon-button edit-btn" title="Add Image">➕📷</button>
+                <Tooltip title="Add Image">
+                  <Button
+                    variant="contained"
+                    onClick={startCamera}
+                    startIcon={<AddAPhotoIcon />}
+                  >
+                    Add Image
+                  </Button>
+                </Tooltip>
               ) : (
                 <>
-                  <button onClick={startCamera} className="icon-button edit-btn" title="Add Camera Image">➕📷</button>
-                  <button onClick={startScreen} className="icon-button edit-btn" title="Add Screen Image">➕🖥️</button>
+                  <Tooltip title="Add Camera Image">
+                    <Button
+                      variant="contained"
+                      onClick={startCamera}
+                      startIcon={<AddAPhotoIcon />}
+                    >
+                      Add Camera Image
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Add Screen Image">
+                    <Button
+                      variant="contained"
+                      onClick={startScreen}
+                      startIcon={<ScreenShareIcon />}
+                    >
+                      Add Screen Image
+                    </Button>
+                  </Tooltip>
                 </>
               )
             )}
-            {onClear && <button onClick={clearImages} className="icon-button delete-btn" title="Clear All Images">🗑️</button>}
-            {allowSave && <button onClick={saveImages} disabled={capturedImages.length === 0}>Save Record</button>}
-            <button onClick={onClose} className="icon-button delete-btn" title="Back to Main">⬅️</button>
-          </div>
-        </div>
+            {onClear && (
+              <Tooltip title="Clear All Images">
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={clearImages}
+                  startIcon={<DeleteForeverIcon />}
+                >
+                  Clear All
+                </Button>
+              </Tooltip>
+            )}
+            {allowSave && (
+              <Tooltip title="Save Record">
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={saveImages}
+                  disabled={capturedImages.length === 0}
+                  startIcon={<SaveIcon />}
+                >
+                  Save Record
+                </Button>
+              </Tooltip>
+            )}
+            <Tooltip title="Back to Main">
+              <Button
+                variant="outlined"
+                onClick={onClose}
+                startIcon={<ArrowBackIcon />}
+              >
+                Back
+              </Button>
+            </Tooltip>
+          </Stack>
+        </Box>
       )}
-    </div>
+    </Box>
   )
 }
 

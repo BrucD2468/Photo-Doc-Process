@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Box, Button, IconButton, Tooltip } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
 import Login from './Login'
 import Register from './Register'
 import BarcodeScanPage from './BarcodeScanPage'
@@ -11,7 +13,7 @@ import ImageGalleryPage from './ImageGalleryPage'
 import ShippingPage from './ShippingPage'
 import ShippedShipmentsPage from './ShippedShipmentsPage'
 import PalletFilteringPage from './PalletFilteringPage'
-import Sidebar from './Sidebar' // Import Sidebar component
+import Sidebar from './Sidebar' // Import Sidebar
 
 import './App.css'
 
@@ -25,13 +27,38 @@ function App() {
   const userMenuRef = useRef(null)
   const userIconButtonRef = useRef(null)
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false) // State for sidebar
+  // Sidebar state and refs
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const sidebarRef = useRef(null)
   const hamburgerButtonRef = useRef(null)
+  const [adminPanelTab, setAdminPanelTab] = useState('info')
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev)
   }
+
+  const handleSetAdminPanelTab = (tab) => {
+    setAdminPanelTab(tab)
+    _setPage('admin') // Navigate to admin page when setting an admin tab
+    setIsSidebarOpen(false) // Close sidebar after selection
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isSidebarOpen &&
+          sidebarRef.current &&
+          !sidebarRef.current.contains(event.target) &&
+          hamburgerButtonRef.current &&
+          !hamburgerButtonRef.current.contains(event.target)) {
+        setIsSidebarOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isSidebarOpen])
 
   // Custom navigation function that manages history
   const setPage = (newPage, options = { replace: false }) => {
@@ -68,13 +95,8 @@ function App() {
   const [selectedShippingList, setSelectedShippingList] = useState(null) // New state for selected shipping list
   const [filteredShippingLists, setFilteredShippingLists] = useState([]) // State for filtered shipping lists on ShippedShipmentsPage
   const [customerSearchTerm, setCustomerSearchTerm] = useState('') // New state for customer search term on main page
-  const [barcodeSearchTerm, setBarcodeSearchTerm] = useState('') // New state for barcode search term on myInfo page
-  const [customerInputFilterTerm, setCustomerInputFilterTerm] = useState('') // New state for customer filter term on myInfo page
-  const [myInfoBarcodeInput, setMyInfoBarcodeInput] = useState('') // Input value for barcode search on myInfo page
-  const [myInfoCustomerInput, setMyInfoCustomerInput] = useState('') // Select value for customer filter on myInfo page
   const [enableCustomerFilter, setEnableCustomerFilter] = useState(false); // New state for enabling customer filter
-    const [filteredMyInfoShippingLists, setFilteredMyInfoShippingLists] = useState([])
-    const [currentFilteredPalletRecords, setCurrentFilteredPalletRecords] = useState([]) // State for records on PalletFilteringPage
+  const [currentFilteredPalletRecords, setCurrentFilteredPalletRecords] = useState([]) // State for records on PalletFilteringPage
   const [selectedFilteredShippingList, setSelectedFilteredShippingList] = useState(null) // State for selected filtered shipping list
 
 
@@ -94,21 +116,13 @@ function App() {
           !userIconButtonRef.current.contains(event.target)) {
         setShowDropdown(false)
       }
-
-      if (isSidebarOpen &&
-          sidebarRef.current &&
-          !sidebarRef.current.contains(event.target) &&
-          hamburgerButtonRef.current &&
-          !hamburgerButtonRef.current.contains(event.target)) {
-        setIsSidebarOpen(false)
-      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showDropdown, isSidebarOpen]) // Add isSidebarOpen to dependency array
+  }, [showDropdown])
   // Effect to load initial user state from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -128,26 +142,26 @@ function App() {
 
   useEffect(() => {
     if (page === 'myInfo' && user) {
-      const fetchShippingListsAndCustomers = async () => {
-        try {
-          const params = new URLSearchParams()
-          // customerSearchTerm is now for the SELECT, not a direct filter for the API
-          // The API call to get all shipping lists to extract customer names does not need customerSearchTerm
+      const fetchShippingLists = async () => {
+            try {
+              const params = new URLSearchParams();
+              if (enableCustomerFilter && customerSearchTerm) params.append('customer_name', customerSearchTerm);
 
-          const response = await fetch(`${API_URL}/api/shipping-lists?${params.toString()}`)
+          const response = await fetch(`${API_URL}/api/shipping-lists?${params.toString()}`);
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
-          const data = await response.json()
-          setShippingLists(data.shipping_lists)
+          const data = await response.json();
+          setShippingLists(data.shipping_lists);
         } catch (error) {
-          console.error("Error fetching shipping lists:", error)
+          console.error("Error fetching shipping lists:", error);
           // Optionally, show an alert to the user
         }
-      }
-      fetchShippingListsAndCustomers()
+      };
+      fetchShippingLists();
     }
-  }, [page, user, API_URL]) // Removed customerSearchTerm and enableCustomerFilter from dependency array
+  }, [page, user, API_URL, customerSearchTerm, enableCustomerFilter]);
+
 
   const handleLogin = (userData) => {
     setUser(userData)
@@ -173,70 +187,24 @@ function App() {
     setPage('palletPage')
   }
 
-  const handleMyInfoCustomerInputChange = (e) => {
-    setMyInfoCustomerInput(e.target.value)
-  }
-
-  const triggerMyInfoSearch = async (barcodeToSearch) => {
-    // Use the barcode from the BarcodeSearch component if provided, otherwise use current state
-    const finalBarcode = barcodeToSearch !== undefined ? barcodeToSearch : myInfoBarcodeInput;
-    setBarcodeSearchTerm(finalBarcode) // Update the state that triggers the useEffect for shipping lists
-
-    let customerFilter = '';
-    if (enableCustomerFilter) {
-      setCustomerInputFilterTerm(myInfoCustomerInput)
-      customerFilter = myInfoCustomerInput
-    } else {
-      setCustomerInputFilterTerm('') // Clear customer filter if disabled
-    }
-
-    // API call to get filtered pallet records
+  const handleBarcodeSearchAndNavigate = async (barcode) => {
+    if (!barcode) return
     try {
-      const params = new URLSearchParams();
-      if (finalBarcode) {
-        params.append('barcode', finalBarcode);
-      }
-      if (customerFilter) {
-        params.append('customer_name', customerFilter);
-      }
-      // No longer append email filter as per user request to see all records
-      // if (user && user.email) {
-      //   params.append('email', user.email);
-      // }
-
-      const response = await fetch(`${API_URL}/api/pallet-records-filtered?${params.toString()}`);
+      const response = await fetch(`${API_URL}/api/barcode/search?barcode=${barcode}`)
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
-      const data = await response.json();
+      const data = await response.json()
       if (data.records && data.records.length > 0) {
-        navigateToPalletPage(data.records); // Navigate to PalletPage with filtered records
+        navigateToPalletPage(data.records)
       } else {
-        alert("No pallet records found matching your search criteria.");
+        alert('No records found for this barcode.')
       }
     } catch (error) {
-      console.error("Error fetching filtered pallet records:", error);
-      alert("Failed to fetch pallet records. Please try again.");
+      console.error('Error searching barcode:', error)
+      alert('Error searching barcode: ' + error.message)
     }
   }
-
-  // Effect to filter shipping lists based on barcode and customer search terms
-  useEffect(() => {
-    let filtered = [...shippingLists]
-
-    if (barcodeSearchTerm) {
-      filtered = filtered.filter(list =>
-        list.list_name.toLowerCase().includes(barcodeSearchTerm.toLowerCase())
-      )
-    }
-
-    if (enableCustomerFilter && customerInputFilterTerm) {
-      filtered = filtered.filter(list =>
-        list.customer_name && list.customer_name.toLowerCase().includes(customerInputFilterTerm.toLowerCase())
-      )
-    }
-    setFilteredMyInfoShippingLists(filtered)
-  }, [shippingLists, barcodeSearchTerm, customerInputFilterTerm])
 
   const navigateToImageGalleryPage = (record) => {
     setSelectedBarcodeRecord(record)
@@ -352,6 +320,15 @@ function App() {
 
   return (
     <div className="app">
+      {user && user.role === 1 && ( // Render sidebar only if user is logged in AND is an admin
+        <Sidebar
+          ref={sidebarRef}
+          isSidebarOpen={isSidebarOpen}
+          closeSidebar={toggleSidebar}
+          setAdminPanelTab={handleSetAdminPanelTab} // Pass the new handler
+          setPage={_setPage} // Pass the internal _setPage to directly change the page
+        />
+      )}
 
 
       {/* Media Capture Modal - always rendered at the top level to overlay any page */}
@@ -368,6 +345,8 @@ function App() {
             onDelete={(index) => { /* Placeholder for future implementation if needed */ }}
             onClear={() => { /* Placeholder for future implementation if needed */ }}
             allowSave={false}
+            toggleSidebar={toggleSidebar}
+            hamburgerButtonRef={hamburgerButtonRef}
           />
         </div>
       )}
@@ -381,23 +360,24 @@ function App() {
         <div className="main-content">
           {page === 'myInfo' && (
             <>
-              {user && user.role === 1 && (
-                <Sidebar
-                  ref={sidebarRef}
-                  isSidebarOpen={isSidebarOpen}
-                  closeSidebar={toggleSidebar}
-                  setPage={setPage} // Pass setPage to Sidebar
-                  currentPage={page}
-                  setAdminPanelTab={(tab) => { /* No-op or handle as needed for App.jsx context */ } } // AdminPanel specific, not used here
-                />
-              )}
               <div className="header" width="100%">
-                {user && user.role === 1 && (
-                  <button ref={hamburgerButtonRef} onClick={toggleSidebar} className="icon-button hamburger-button" title="Menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                  </button>
+                {user && user.role === 1 && ( // Only show hamburger button if user is logged in AND is an admin
+                  <Tooltip title="Menu">
+                    <IconButton ref={hamburgerButtonRef} onClick={toggleSidebar} color="inherit" sx={{ border: 'none', background: 'none', cursor: 'pointer', p: 1, '&:hover': { background: 'rgba(255,255,255,0.1)' } }}>
+                      <MenuIcon />
+                    </IconButton>
+                  </Tooltip>
                 )}
-                <h1>Shipping Photo App</h1>
+                <div className="header-title-group">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-cart-star">
+                    <path d="M3 3h2l2.5 10h10l2-7H6.5" />
+                    <path d="M6 6l3-3" />
+                    <circle cx="10" cy="20" r="1" />
+                    <circle cx="18" cy="20" r="1" />
+                    <path d="M15 8l.5 1.5L17 10l-1.5.5L15 12l-.5-1.5L13 10l1.5-.5L15 8z" />
+                  </svg>
+                  <span>Shipping Photo App</span>
+                </div>
                 <UserMenuComponent
                   ref={userMenuRef}
                   userIconButtonRef={userIconButtonRef}
@@ -409,46 +389,33 @@ function App() {
                   currentPage={page}
                 />
               </div>
-              <div className="search-controls-myinfo">
-                <div className="customer-barcode-search-row">
-                  <div className="filter-item customer-filter-item">
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={enableCustomerFilter}
-                        onChange={(e) => setEnableCustomerFilter(e.target.checked)}
-                      />
-                      Filter by Customer
-                    </label>
-                    {enableCustomerFilter && (
-                      <div className="input-search-group">
-                        <input
-                          type="text"
-                          id="customer-input"
-                          placeholder="Enter customer name..."
-                          value={myInfoCustomerInput}
-                          onChange={handleMyInfoCustomerInputChange}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div className="filter-item barcode-search-item">
-                    <BarcodeSearch
-                      onSearch={(barcode) => {
-                        setMyInfoBarcodeInput(barcode); // Update myInfoBarcodeInput state
-                        triggerMyInfoSearch(barcode); // Trigger search with the updated barcode
-                      }} 
-                      showSearchButton={true}
-                      initialBarcode={myInfoBarcodeInput}
+              <div className="filter-item customer-filter-item main-page-customer-filter">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={enableCustomerFilter}
+                    onChange={(e) => setEnableCustomerFilter(e.target.checked)}
+                  />
+                  Filter by Customer
+                </label>
+                {enableCustomerFilter && (
+                  <div className="input-search-group">
+                    <input
+                      type="text"
+                      placeholder="Filter by Customer Name..."
+                      value={customerSearchTerm}
+                      onChange={(e) => setCustomerSearchTerm(e.target.value)}
                     />
                   </div>
-                </div>
+                )}
+              </div>
+              <BarcodeSearch onSearch={handleBarcodeSearchAndNavigate} />
 
-              {filteredMyInfoShippingLists.length > 0 && (
+              {shippingLists.length > 0 && (
                 <div className="shipping-lists-container">
                     <p className="shipping-list-header-text">Or Select Shipping List:</p>
                     <div className="shipping-lists">
-                        {filteredMyInfoShippingLists.map(list => (
+                        {shippingLists.map(list => (
                             <div
                                 key={list.id}
                                 onClick={() => navigateToShippingPage(list)}
@@ -476,7 +443,6 @@ function App() {
               <button onClick={() => setPage('shippedShipmentsPage')} className="shipped-shipments-button">
                 View Shipped Shipments
               </button>
-            </div>
             </>
           )}
 
@@ -486,6 +452,9 @@ function App() {
               handleLogout={handleLogout}
               setPage={setPage}
               currentPage={page}
+              toggleSidebar={toggleSidebar}
+              hamburgerButtonRef={hamburgerButtonRef}
+              adminPanelTab={adminPanelTab}
             />
           )}
 
@@ -620,6 +589,7 @@ export const UserMenuComponent = React.forwardRef(({ user, toggleDropdown, showD
       </button>
       {showDropdown && (
         <div className="dropdown-menu">
+           
           <button onClick={() => { handleLogout(); toggleDropdown(); }} className="dropdown-item logout-btn">➡️ Log out</button>
         </div>
       )}

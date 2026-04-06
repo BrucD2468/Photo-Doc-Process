@@ -1,7 +1,3 @@
-from dotenv import load_dotenv
-
-load_dotenv()
-
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Body, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
@@ -107,6 +103,7 @@ async def login(data: LoginData):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    print(f"Login successful for user: {user}")
     return {"success": True, "user": user}
 
 @app.post("/api/barcode")
@@ -161,44 +158,6 @@ async def get_my_info(email: str):
     cursor.close()
     conn.close()
     return {"records": records}
-
-@app.get("/api/pallet-records-filtered")
-async def get_pallet_records_filtered(
-    barcode: Optional[str] = None,
-    customer_name: Optional[str] = None,
-    email: Optional[str] = None
-):
-    conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-
-    query = """
-        WITH RankedRecords AS (
-            SELECT
-                *,
-                ROW_NUMBER() OVER(PARTITION BY barcode ORDER BY date DESC) as rn
-            FROM Barcode_Info
-            WHERE 1=1
-    """
-    params = []
-    if barcode:
-        query += " AND barcode LIKE %s"
-        params.append(f"%{barcode}%")
-    if customer_name:
-        query += " AND customer_name LIKE %s"
-        params.append(f"%{customer_name}%")
-
-    query += " ) SELECT * FROM RankedRecords WHERE rn = 1 ORDER BY date DESC;"
-
-    cursor.execute(query, params)
-    records = cursor.fetchall()
-
-    for rec in records:
-        rec['images'] = json.loads(rec.get('images', '[]') or '[]')
-
-    cursor.close()
-    conn.close()
-    return {"records": records}
-
 
 @app.get("/api/admin/users")
 async def get_all_users():

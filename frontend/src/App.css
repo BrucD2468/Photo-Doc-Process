@@ -278,12 +278,6 @@ tr:nth-child(even) {
   justify-content: flex-start;
 }
 
-.action-button-compact {
-  padding: 4px 8px; /* Further reduced padding */
-  width: 50px; /* Further reduced width */
-  font-size: 12px;
-}
-
 .action-button-blue:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
@@ -664,120 +658,6 @@ tr:nth-child(even) {
   color: white;
 }
 
-/* Styling for the new search controls on myInfo page */
-/* Styling for the new search controls on myInfo page */
-.search-controls-myinfo {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.search-controls-myinfo .barcode-search {
-  width: 100%; /* Ensure barcode search takes full width */
-}
-
-.customer-barcode-search-row {
-  display: flex;
-  flex-direction: row; /* Main items in a row */
-  flex-wrap: wrap; /* Allow wrapping */
-  gap: 10px;
-  align-items: flex-end; /* Align to bottom for varying heights */
-  margin-top: 0; /* No extra space */
-}
-
-.filter-item.customer-filter-item {
-  display: flex;
-  flex-direction: column; /* Arrange label and input vertically initially */
-  align-items: flex-start; /* Vertically align items to the start */
-  gap: 5px; /* Space between checkbox/label and input */
-  flex-grow: 1;
-}
-
-.filter-item.customer-filter-item .input-search-group {
-  flex-grow: 1; /* Allow the input to take available space */
-  min-width: 150px; /* Ensure input has a minimum width before wrapping */
-  width: 100%; /* Fill available space */
-}
-
-.checkbox-label {
-  display: flex;
-  justify-content: flex-start;
-  gap: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  white-space: nowrap;
-  text-align: left;
-  font-size: 14px;
-  color: #333;
-}
-
-.checkbox-label input[type="checkbox"] {
-  transform: scale(1.2);
-}
-
-.input-search-group input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-.input-search-group input[type="text"]:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.search-controls-myinfo > .action-button-blue {
-  margin-top: 0; /* Remove default margin-top */
-  height: 36px; /* Match input height for alignment */
-  padding: 10px 15px; /* Adjust padding for better appearance */
-  font-size: 16px;
-  align-self: flex-end; /* Align to the bottom */
-  flex-shrink: 0;
-}
-
-.filter-item.barcode-search-item {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end; /* Align button to the bottom of the input */
-  gap: 10px;
-  flex-grow: 1;
-}
-
-.filter-item.barcode-search-item .input-search-group {
-  flex-grow: 1;
-  min-width: 180px;
-}
-
-.search-button {
-  padding: 8px 10px;
-  font-size: 14px;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue gradient */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  height: 36px; /* Match input height for alignment */
-  display: flex;
-  max-width: 100px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0; /* Prevent button from shrinking */
-}
-
-.search-button:hover {
-  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-}
-
-
 /* Green Button Style */
 .green-button {
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); /* Green gradient */
@@ -1032,24 +912,6 @@ button:focus {
 .record-info p {
   margin: 5px 0;
   font-size: 14px;
-}
-
-.barcode-search-button {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px; /* Adjusted padding for 18px font and 95px width */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 95px; /* Specified width */
-  font-size: 18px; /* Specified font size */
-  font-weight: 500;
-  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
-  margin: 2px; /* Small margin for spacing between buttons */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center; /* Center content in button */
 }
 
 .admin-panel {
@@ -1497,13 +1359,6 @@ button:focus {
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.search-input {
-  display: flex;
-  align-items: flex-end; /* Align items to the bottom */
-  gap: 10px; /* Space between input group and button */
-  flex-grow: 1; /* Allow the search input to grow */
 }
 
 .input-search-group input {
